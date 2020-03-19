@@ -3,41 +3,57 @@ let inputRub = document.getElementById('rub'),
   btnClear = document.querySelector('button');
 
 inputRub.addEventListener('input', () => {
-  let request = new XMLHttpRequest();
 
-  request.open('GET', './current.json');
-  request.setRequestHeader('Content-type', 'application.json; charset=utf-8');
-  request.send();
+  function catchData() {
 
-  request.addEventListener('readystatechange', () => {
-    if (request.readyState === 4 && request.status == 200) {
-      let data = JSON.parse(request.response);
+    return new Promise(function (resolve, reject) {
+      let request = new XMLHttpRequest();
 
-      inputUsd.value = (inputRub.value / data.usd).toFixed(2);
+      request.open('GET', './current.json');
+      request.setRequestHeader('Content-type', 'application.json; charset=utf-8');
+      request.send();
 
-    } else {
-      inputUsd.value = 'шото пошло не так, сорямба';
-    }
-  });
+      request.onload = function () {
+        if (request.readyState == 4 && request.status == 200) {
+          resolve(this.response)
+        } else {
+          reject();
+        }
+      };
+
+    });
+  }
+  catchData()
+    .then(response => {
+      console.log(response);
+      let data = JSON.parse(response);
+      inputUsd.value = inputRub.value / data.usd;
+    })
+    .then(() => console.log(5000))
+    .catch(() => console.log("Что-то пошло не так"));
 });
 
-inputUsd.addEventListener('input', () => {
-  let request = new XMLHttpRequest();
 
-  request.open('GET', './current.json');
-  request.setRequestHeader('Content-type', 'application.json; charset=utf-8');
-  request.send();
 
-  request.addEventListener('readystatechange', () => {
-    if (request.readyState === 4 && request.status == 200) {
-      let data = JSON.parse(request.response);
 
-      inputRub.value = (inputUsd.value * data.usd).toFixed(0);
-    } else {
-      inputRub.value = "шото таки снова пошло не так, Абрам!";
-    }
-  });
-});
+
+// inputUsd.addEventListener('input', () => {
+//   let request = new XMLHttpRequest();
+
+//   request.open('GET', './current.json');
+//   request.setRequestHeader('Content-type', 'application.json; charset=utf-8');
+//   request.send();
+
+//   request.addEventListener('readystatechange', () => {
+//     if (request.readyState === 4 && request.status == 200) {
+//       let data = JSON.parse(request.response);
+
+//       inputRub.value = (inputUsd.value * data.usd).toFixed(0);
+//     } else {
+//       inputRub.value = "шото таки снова пошло не так, Абрам!";
+//     }
+//   });
+// });
 
 btnClear.addEventListener('click', () => {
   inputRub.value = '';
