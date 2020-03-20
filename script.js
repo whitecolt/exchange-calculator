@@ -2,13 +2,15 @@ let inputRub = document.getElementById('rub'),
   inputUsd = document.getElementById('usd'),
   btnClear = document.querySelector('button');
 
+// from RUB to USD
+
 inputRub.addEventListener('input', () => {
 
   function catchData() {
 
     return new Promise(function (resolve, reject) {
-      let request = new XMLHttpRequest();
 
+      let request = new XMLHttpRequest();
       request.open('GET', './current.json');
       request.setRequestHeader('Content-type', 'application.json; charset=utf-8');
       request.send();
@@ -23,19 +25,20 @@ inputRub.addEventListener('input', () => {
 
     });
   }
+
   catchData()
     .then(response => {
       console.log(response);
       let data = JSON.parse(response);
       inputUsd.value = (inputRub.value / data.usd).toFixed(2);
     })
-
     .catch(() => console.log("Что-то пошло не так"));
 });
 
 
 
 
+// From USD to RUB
 
 inputUsd.addEventListener('input', () => {
 
@@ -67,6 +70,8 @@ inputUsd.addEventListener('input', () => {
 
 
 });
+
+// Clear both inputs
 
 btnClear.addEventListener('click', () => {
   inputRub.value = '';
